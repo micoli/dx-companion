@@ -55,7 +55,7 @@ class ToolWindowContent {
     private void updateMainPanel() {
         Configuration newConfiguration;
         try {
-            newConfiguration = ConfigurationFactory.get(project);
+            newConfiguration = ConfigurationFactory.get(project.getBaseDir().getCanonicalPath());
         } catch (ConfigurationException e) {
             removeAllComponents();
             tree = null;
