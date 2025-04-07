@@ -1,0 +1,18 @@
+<idea-plugin>
+    <id>org.micoli.dxcompanion</id>
+
+    <name>Dx-Companion</name>
+
+    <vendor email="olivier@micoli.org" url="https://github.com/micoli">micoli</vendor>
+
+    <description>Will be automatically replaced by gradle on built.</description>
+
+    <depends>com.intellij.modules.platform</depends>
+    <depends>org.jetbrains.plugins.terminal</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <notificationGroup id="DX Companion" displayType="BALLOON"/>
+        <toolWindow id="DX Companion" secondary="true" icon="AllIcons.Toolwindows.WebToolWindow" anchor="left"
+                    factoryClass="org.micoli.dxcompanion.ui.ToolWindowFactory"/>
+    </extensions>
+</idea-plugin>
