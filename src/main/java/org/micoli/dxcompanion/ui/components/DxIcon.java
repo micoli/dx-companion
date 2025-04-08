@@ -6,4 +6,5 @@ import javax.swing.*;
 
 public interface DxIcon {
     Icon Refresh = IconLoader.getIcon("expui/actions/buildAutoReloadChanges.svg", DxIcon.class);
+    Icon Execute = IconLoader.getIcon("actions/execute.svg", DxIcon.class);
 }

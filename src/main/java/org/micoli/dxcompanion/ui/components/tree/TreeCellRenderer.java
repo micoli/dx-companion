@@ -13,10 +13,13 @@ class TreeCellRenderer extends DefaultTreeCellRenderer {
         super.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);
 
         if (value instanceof DynamicTreeNode dynamicTreeNode) {
-            setText(dynamicTreeNode.getLabel());
-            setIcon(dynamicTreeNode.getIcon());
+            this.setText(dynamicTreeNode.getLabel());
+            this.setIcon(dynamicTreeNode.getIcon());
+            if (dynamicTreeNode.getTooltip() != null) {
+                this.setToolTipText(dynamicTreeNode.getTooltip());
+            }
         } else {
-            setIcon(null);
+            this.setIcon(null);
         }
 
         return this;

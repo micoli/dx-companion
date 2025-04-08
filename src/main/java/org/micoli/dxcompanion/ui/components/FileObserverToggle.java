@@ -24,7 +24,7 @@ public class FileObserverToggle extends DynamicTreeNode {
 
     public FileObserverToggle(Tree tree, ObservedFile observedFile) {
         super(tree, observedFile, IconLoader.getIcon(observedFile.unknownIcon, DxIcon.class));
-        this.root = ProjectManager.getInstance().getOpenProjects()[0].getBaseDir().getCanonicalPath();
+        this.root = ProjectManager.getInstance().getOpenProjects()[0].getBasePath();
         this.observedFile = observedFile;
         activeRegularExpression = "^" + observedFile.variableName + "=";
         disabledRegularExpression = "^" + observedFile.commentPrefix + "\\s*" + observedFile.variableName + "=";
