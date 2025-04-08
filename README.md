@@ -1,11 +1,9 @@
 <!-- Plugin description -->
-# DxCompanion
+# Dx-Companion
 
 ## Overview
 
-The plugin creates a tool window in the IDE sidebar that offers two primary functionalities:
-1. **Configuration File Toggle** - Visual controls to enable/disable specific variables in configuration files
-2. **Shell Command Execution** - Custom action buttons that run defined shell commands in the terminal
+DX Companion is an IntelliJ IDEA plugin designed to enhance developer experience by providing a customizable, configuration-driven interface for common development actions. The plugin creates a dedicated tool window that allows developers to execute terminal commands, toggle environment variables, and trigger IntelliJ actions through a tree-based UI with keyboard shortcuts support.
 
 ## Features
 
@@ -28,13 +26,6 @@ The plugin uses a JSON configuration file (`.dx-companion.json`) in the project 
 ### Auto-Refresh
 - Automatically checks for configuration changes every 2 seconds
 - Provides a manual refresh button for immediate updates
-
-## Technical Details
-
-- Built as an IntelliJ plugin using JetBrains SDK
-- Uses Jackson for JSON parsing
-- Integrates with IntelliJ Terminal API for command execution
-- Utilizes IntelliJ icon system for visual feedback
 
 ## Use Cases
 
@@ -59,39 +50,69 @@ This tool serves as a companion for developers to streamline common tasks and re
 
 The `.dx-companion.json` file is the core configuration file for the DxCompanion IntelliJ plugin. It defines the files to observe for toggling and the shell commands that can be executed from the plugin's tool window.
 
-## File Location
+## Configuration
 
-The configuration file must be placed in the root directory of your project and named exactly `.dx-companion.json`.
+The plugin is driven by JSON configuration files located in the project root:
+
+- Primary configuration file: `.dx-companion.json`
+- Local override configuration: `.dx-companion.local.json`
+
+If both files are found, their configurations are merged.
 
 ## Schema
 
-The configuration file follows this JSON structure:
+The plugin supports three main node types:
 
-```json
-{
-  "observedFiles": [
-    {
-      "label": "Display name",
-      "filePath": "path/to/file.env",
-      "variableName": "VARIABLE_NAME",
+1. Action Nodes
+
+   Actions execute terminal commands or trigger built-in IDE actions:
+   ```json
+   {
+       "type": "action",
+       "label": "Start Application",
+       "command": "npm start",
+       "cwd": "./app",
+       "shortcut": "ctrl alt s",
+       "icon": "debugger/threadRunning.svg"
+   }
+   ```
+   Built-in IDE actions can be called using the `action:` prefix:
+   ```json
+   {
+       "type": "action",
+       "label": "Open Terminal",
+       "command": "action:ActivateTerminalToolWindow"
+   }
+   ```
+2. Observed File Nodes
+
+   These nodes monitor configuration files (like .env) and allow toggling variables on/off by commenting/uncommenting:
+   ```json
+   {
+      "type": "observedFile",
+      "label": "Enable Debug Mode",
+      "filePath": ".env",
+      "variableName": "DEBUG_MODE",
       "commentPrefix": "#",
-      "shortcut": "ctrl alt l",
-      "activeIcon": "actions/inlayRenameInComments.svg",
-      "inactiveIcon": "actions/inlayRenameInCommentsActive.svg",
-      "unknownIcon": "expui/fileTypes/unknown.svg"
-    }
-  ],
-  "actions": [
-    {
-      "label": "Action Name",
-      "command": "echo 'Hello World'",
-      "cwd": "./optional/path",
-      "shortcut": "ctrl alt H",
-      "icon": "debugger/threadRunning.svg"
-    }
-  ]
-}
-```
+      "shortcut": "ctrl shift d"
+   }
+   ```
+
+3. Path Nodes
+
+   Organizational nodes that create folders in the tree structure:
+   ```json
+   {
+      "type": "path",
+      "label": "Database Tools",
+      "nodes": [ {
+         "type": "action",
+         "label": "Migrate Database",
+         "command": "npm run migrate"
+      }]
+   }
+   ```
+
 
 ## Configuration Properties
 
@@ -161,7 +182,7 @@ DxCompanion uses IntelliJ's built-in icon system. You can specify icons from the
 
 ```json
 {
-  "observedFiles": [
+  "nodes": [
     {
       "label": "Debug Mode",
       "filePath": ".env",
@@ -181,18 +202,28 @@ DxCompanion uses IntelliJ's built-in icon system. You can specify icons from the
       "filePath": "docker-compose.yml",
       "variableName": "LOCAL_DATABASE",
       "commentPrefix": "#"
-    }
-  ],
-  "actions": [
+    },
     {
       "label": "Build",
       "command": "mvn clean install",
       "icon": "actions/compile.svg"
     },
     {
-      "label": "Open IdeScriptingConsole",
-      "command": "action:IdeScriptingConsole",
-      "icon": "actions/compile.svg"
+      "type": "path",
+      "label": "section1",
+      "nodes": [
+        {
+          "type": "path",
+          "label": "section1.1",
+          "nodes": [
+            {
+              "label": "Open IdeScriptingConsole",
+              "command": "action:IdeScriptingConsole",
+              "icon": "actions/compile.svg"
+            }
+          ]
+        }
+      ]
     },
     {
       "label": "Run Tests",
@@ -251,24 +282,3 @@ If the plugin encounters issues with your configuration file, it will display an
 The plugin automatically reloads the configuration every 2 seconds, so changes to the configuration file will be reflected without restarting the IDE.
 
 <!-- Plugin description end -->
-
-## Architecture
-
-The project follows a clean architecture with clear separation between models, UI components, and core functionality:
-
-### Core Components
-
-- **Models**: Contains simple data classes representing configuration elements
-  - `Configuration`: Root configuration container with arrays of observed files and actions
-  - `ObservedFile`: Defines configuration files to observe with toggle capabilities
-  - `Action`: Defines shell commands that can be executed
-
-- **UI Components**: Handles display and interaction
-  - `ToolWindowFactory`: Creates the tool window in the IDE
-  - `ToolWindowContent`: Manages the visual content and updates
-  - `FileObserverToggle`: UI control for toggling configuration variables
-  - `ActionButton`: UI control for executing shell commands or registered actions
-
-- **Configuration Management**:
-  - `ConfigurationFactory`: Reads and parses the `.dx-companion.json` configuration file
-  - `ConfigurationException`: Custom exception for configuration errors
