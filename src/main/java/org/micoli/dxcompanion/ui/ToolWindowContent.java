@@ -55,18 +55,18 @@ class ToolWindowContent {
     private void updateMainPanel() {
         Configuration newConfiguration;
         try {
-            newConfiguration = ConfigurationFactory.get(project.getBaseDir().getCanonicalPath());
+            newConfiguration = ConfigurationFactory.get(project.getBasePath());
         } catch (ConfigurationException e) {
             removeAllComponents();
             tree = null;
             mainPanel.setLayout(new BorderLayout());
             mainPanel.add(new TextArea(e.getMessage()));
             mainPanel.revalidate();
-            configuration.setSerial(null);
+            configuration.serial = null;
             return;
         }
         assert newConfiguration != null;
-        if (newConfiguration.getSerial().equals(configuration.getSerial())) {
+        if (newConfiguration.serial.equals(configuration.serial)) {
             return;
         }
 
@@ -74,7 +74,7 @@ class ToolWindowContent {
         mainPanel.revalidate();
         mainPanel.setLayout(new BorderLayout());
 
-        tree = actionTreeFactory.treeBuilder(newConfiguration.getNodes());
+        tree = actionTreeFactory.treeBuilder(newConfiguration.nodes);
         mainPanel.add(new JBScrollPane(tree), BorderLayout.CENTER);
 
         configuration = newConfiguration;

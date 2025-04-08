@@ -7,7 +7,7 @@ import java.util.Map;
 
 public class GsonTools {
 
-    public static enum ConflictStrategy {
+    public enum ConflictStrategy {
 
         THROW_EXCEPTION, PREFER_FIRST_OBJ, PREFER_SECOND_OBJ, PREFER_NON_NULL;
     }

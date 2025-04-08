@@ -9,9 +9,6 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
     @JsonSubTypes.Type(name = "action", value = Action.class),
     @JsonSubTypes.Type(name = "observedFile", value = ObservedFile.class),
 })
-public class AbstractNode {
+public abstract class AbstractNode {
     public String label;
-    public String getLabel() {
-        return label;
-    }
 }

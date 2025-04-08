@@ -17,26 +17,26 @@ public class ActionNode extends DynamicTreeNode {
     public static final String ACTION_PREFIX = "action:";
 
     public ActionNode(Tree tree, Action action) {
-        super(tree,action, IconLoader.getIcon(action.getIcon(), DxIcon.class));
+        super(tree,action, IconLoader.getIcon(action.icon, DxIcon.class));
         Project project = ProjectManager.getInstance().getOpenProjects()[0];
         Runnable commandAction = () -> {
-            if (action.getCommand().startsWith(ACTION_PREFIX)) {
-                invokeBuiltinActionFromComponent(action.getCommand().replaceFirst(ACTION_PREFIX, ""));
+            if (action.command.startsWith(ACTION_PREFIX)) {
+                invokeBuiltinActionFromComponent(action.command.replaceFirst(ACTION_PREFIX, ""));
                 return;
             }
             runAction(action, project);
         };
         this.setAction(commandAction);
-        registerShortcut(action.getLabel(), action.getShortcut(), commandAction);
+        registerShortcut(action.label, action.shortcut, commandAction);
     }
 
     private static void runAction(Action action, Project project) {
-        String cwd = action.getCwd() != null ? action.getCwd() : project.getBasePath();
+        String cwd = action.cwd != null ? action.cwd : project.getBasePath();
         try {
             TerminalToolWindowManager
                 .getInstance(project)
-                .createLocalShellWidget(cwd, action.getLabel())
-                .executeCommand(action.getCommand());
+                .createLocalShellWidget(cwd, action.label)
+                .executeCommand(action.command);
         } catch (IOException e) {
             LOGGER.error(e);
         }

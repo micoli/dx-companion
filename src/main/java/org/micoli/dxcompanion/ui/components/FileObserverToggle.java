@@ -23,14 +23,14 @@ public class FileObserverToggle extends DynamicTreeNode {
     Status status;
 
     public FileObserverToggle(Tree tree, ObservedFile observedFile) {
-        super(tree, observedFile, IconLoader.getIcon(observedFile.getUnknownIcon(), DxIcon.class));
+        super(tree, observedFile, IconLoader.getIcon(observedFile.unknownIcon, DxIcon.class));
         this.root = ProjectManager.getInstance().getOpenProjects()[0].getBaseDir().getCanonicalPath();
         this.observedFile = observedFile;
-        activeRegularExpression = "^" + observedFile.getVariableName() + "=";
-        disabledRegularExpression = "^" + observedFile.getCommentPrefix() + "\\s*" + observedFile.getVariableName() + "=";
+        activeRegularExpression = "^" + observedFile.variableName + "=";
+        disabledRegularExpression = "^" + observedFile.commentPrefix + "\\s*" + observedFile.variableName + "=";
 
         setAction(this::toggle);
-        registerShortcut(observedFile.getLabel(), observedFile.getShortcut(), this::toggle);
+        registerShortcut(observedFile.label, observedFile.shortcut, this::toggle);
         status = getStatus();
     }
 
@@ -39,16 +39,16 @@ public class FileObserverToggle extends DynamicTreeNode {
         status = getStatus();
         switch (status) {
             case Active:
-                setLabel(observedFile.getLabel());
-                setIcon(IconLoader.getIcon(observedFile.getActiveIcon(), DxIcon.class));
+                setLabel(observedFile.label);
+                setIcon(IconLoader.getIcon(observedFile.activeIcon, DxIcon.class));
                 break;
             case Inactive:
-                setLabel("# " + observedFile.getLabel());
-                setIcon(IconLoader.getIcon(observedFile.getInactiveIcon(), DxIcon.class));
+                setLabel("# " + observedFile.label);
+                setIcon(IconLoader.getIcon(observedFile.inactiveIcon, DxIcon.class));
                 break;
             case Unknown:
-                setLabel(observedFile.getLabel() + " not present");
-                setIcon(IconLoader.getIcon(observedFile.getUnknownIcon(), DxIcon.class));
+                setLabel(observedFile.label + " not present");
+                setIcon(IconLoader.getIcon(observedFile.unknownIcon, DxIcon.class));
                 break;
         }
         if (!status.equals(oldStatus)){
@@ -69,7 +69,7 @@ public class FileObserverToggle extends DynamicTreeNode {
     }
 
     private Status getStatus() {
-        File file = new File(root, observedFile.getFilePath());
+        File file = new File(root, observedFile.filePath);
         if (!file.exists()) {
             return Status.Unknown;
         }
@@ -99,7 +99,7 @@ public class FileObserverToggle extends DynamicTreeNode {
     }
 
     private void replaceInFile(boolean toActive) {
-        File file = new File(root, observedFile.getFilePath());
+        File file = new File(root, observedFile.filePath);
         if (!file.exists()) {
             return;
         }
@@ -110,9 +110,9 @@ public class FileObserverToggle extends DynamicTreeNode {
 
             while (line != null) {
                 if (toActive) {
-                    result.append(line.replaceFirst(disabledRegularExpression, observedFile.getVariableName() + "="));
+                    result.append(line.replaceFirst(disabledRegularExpression, observedFile.variableName + "="));
                 } else {
-                    result.append(line.replaceFirst(activeRegularExpression, observedFile.getCommentPrefix() + observedFile.getVariableName() + "="));
+                    result.append(line.replaceFirst(activeRegularExpression, observedFile.commentPrefix + observedFile.variableName + "="));
                 }
                 result.append(System.lineSeparator());
                 line = reader.readLine();
@@ -127,6 +127,6 @@ public class FileObserverToggle extends DynamicTreeNode {
         } catch (IOException e) {
             LOGGER.error(e);
         }
-        Notification.message(observedFile.getVariableName() + " " + (toActive ? "activated" : "deactivated"));
+        Notification.message(observedFile.variableName + " " + (toActive ? "activated" : "deactivated"));
     }
 }

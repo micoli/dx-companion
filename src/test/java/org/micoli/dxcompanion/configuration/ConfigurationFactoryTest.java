@@ -56,13 +56,12 @@ public class ConfigurationFactoryTest {
         //Then
         objectMapper.registerSubtypes(AbstractNode.class);
         String loadedConfiguration = objectMapper.writeValueAsString(configuration);
-        System.out.println(loadedConfiguration);
-        String simple = Files.asCharSource(new File(Objects.requireNonNull(getClass().getClassLoader().getResource("configuration/" + testPath + "/expect.json")).getFile()), Charsets.UTF_8).read();
+        String expectedConfiguration = Files.asCharSource(new File(Objects.requireNonNull(getClass().getClassLoader().getResource("configuration/" + testPath + "/expect.json")).getFile()), Charsets.UTF_8).read();
         assertThatJson(loadedConfiguration)
             .when(Option.IGNORING_EXTRA_FIELDS)
             .when(Option.IGNORING_ARRAY_ORDER)
             .when(Option.TREATING_NULL_AS_ABSENT)
-            .isEqualTo(simple)
+            .isEqualTo(expectedConfiguration)
         ;
     }
 

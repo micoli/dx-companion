@@ -21,7 +21,7 @@ public class DynamicTreeNode extends DefaultMutableTreeNode {
     DynamicTreeNode(Tree tree, AbstractNode configurationNode, Icon icon) {
         super(configurationNode);
         this.tree = tree;
-        this.label = configurationNode.getLabel();
+        this.label = configurationNode.label;
         this.icon = icon;
     }
 

@@ -45,7 +45,7 @@ public class ConfigurationFactory {
         try {
             stringContent = loadJsonFiles(projectPath, files);
             Configuration configuration = objectMapper.readValue(stringContent, Configuration.class);
-            configuration.setSerial(Arrays.toString(messageDigest.digest(stringContent.getBytes(StandardCharsets.UTF_8))));
+            configuration.serial = Arrays.toString(messageDigest.digest(stringContent.getBytes(StandardCharsets.UTF_8)));
             return configuration;
         } catch (Exception e) {
             throw new ConfigurationException(e.getMessage() + "\\n" + stringContent);

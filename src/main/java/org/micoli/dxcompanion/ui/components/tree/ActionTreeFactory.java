@@ -55,9 +55,9 @@ public class ActionTreeFactory {
                 parent.add(new FileObserverToggle(tree, (ObservedFile) node));
             }
             if(node instanceof Path){
-                treeNode = new DefaultMutableTreeNode(node.getLabel());
+                treeNode = new DefaultMutableTreeNode(node.label);
                 parent.add(treeNode);
-                AbstractNode[] subNodes = ((Path) node).getNodes();
+                AbstractNode[] subNodes = ((Path) node).nodes;
                 if(subNodes==null){
                     continue;
                 }
