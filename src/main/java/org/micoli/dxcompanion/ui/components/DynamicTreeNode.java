@@ -3,7 +3,6 @@ package org.micoli.dxcompanion.ui.components;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.KeyboardShortcut;
 import com.intellij.openapi.keymap.KeymapManager;
-import com.intellij.openapi.util.IconLoader;
 import com.intellij.ui.treeStructure.Tree;
 import org.micoli.dxcompanion.configuration.models.AbstractNode;
 import org.micoli.dxcompanion.configuration.models.Action;

@@ -6,7 +6,6 @@ import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.treeStructure.Tree;
 import com.intellij.util.concurrency.AppExecutorUtil;
 import com.intellij.util.ui.JBUI;
-import com.intellij.util.ui.SingleComponentCenteringLayout;
 import org.jetbrains.annotations.NotNull;
 import org.micoli.dxcompanion.configuration.ConfigurationException;
 import org.micoli.dxcompanion.configuration.ConfigurationFactory;
@@ -18,8 +17,6 @@ import org.micoli.dxcompanion.ui.components.tree.ActionTreeFactory;
 import org.micoli.dxcompanion.ui.components.tree.TreeUtils;
 
 import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.util.concurrent.TimeUnit;
 

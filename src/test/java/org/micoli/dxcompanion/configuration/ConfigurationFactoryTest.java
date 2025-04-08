@@ -3,7 +3,6 @@ package org.micoli.dxcompanion.configuration;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.io.Files;
 import net.javacrumbs.jsonunit.core.Option;
-import org.apache.commons.io.Charsets;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Assert;
 import org.junit.Test;
@@ -12,6 +11,7 @@ import org.micoli.dxcompanion.configuration.models.Configuration;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
@@ -20,17 +20,13 @@ import static org.junit.Assert.assertThrows;
 public class ConfigurationFactoryTest {
     @Test
     public void testItReportEmptyConfiguration() {
-        ConfigurationException exception = assertThrows(ConfigurationException.class, () -> {
-            ConfigurationFactory.get(getConfigurationPath("empty").getAbsolutePath());
-        });
+        ConfigurationException exception = assertThrows(ConfigurationException.class, () -> ConfigurationFactory.get(getConfigurationPath("empty").getAbsolutePath()));
         Assert.assertSame("No .dx-companion(.*).json configuration file(s) found.", exception.getMessage());
     }
 
     @Test
     public void testItReportErroneousConfiguration() {
-        ConfigurationException exception = assertThrows(ConfigurationException.class, () -> {
-            ConfigurationFactory.get(getConfigurationPath("erroneousConfiguration").getAbsolutePath());
-        });
+        ConfigurationException exception = assertThrows(ConfigurationException.class, () -> ConfigurationFactory.get(getConfigurationPath("erroneousConfiguration").getAbsolutePath()));
         Assert.assertTrue(exception.getMessage().contains("com.google.gson.stream.MalformedJsonException: Expected ':'"));
     }
 
@@ -56,7 +52,7 @@ public class ConfigurationFactoryTest {
         //Then
         objectMapper.registerSubtypes(AbstractNode.class);
         String loadedConfiguration = objectMapper.writeValueAsString(configuration);
-        String expectedConfiguration = Files.asCharSource(new File(Objects.requireNonNull(getClass().getClassLoader().getResource("configuration/" + testPath + "/expect.json")).getFile()), Charsets.UTF_8).read();
+        String expectedConfiguration = Files.asCharSource(new File(Objects.requireNonNull(getClass().getClassLoader().getResource("configuration/" + testPath + "/expect.json")).getFile()), StandardCharsets.UTF_8).read();
         assertThatJson(loadedConfiguration)
             .when(Option.IGNORING_EXTRA_FIELDS)
             .when(Option.IGNORING_ARRAY_ORDER)

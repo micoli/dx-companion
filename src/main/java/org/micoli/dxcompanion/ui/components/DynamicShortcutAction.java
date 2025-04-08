@@ -2,6 +2,7 @@ package org.micoli.dxcompanion.ui.components;
 
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
@@ -14,7 +15,7 @@ public class DynamicShortcutAction extends AnAction {
     }
 
     @Override
-    public void actionPerformed(AnActionEvent e) {
+    public void actionPerformed(@NotNull AnActionEvent e) {
         if (actionCallback != null) {
             actionCallback.run();
         }

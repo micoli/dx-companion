@@ -2,16 +2,15 @@ package org.micoli.dxcompanion.configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.google.common.io.Files;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.intellij.openapi.diagnostic.Logger;
 import org.micoli.dxcompanion.configuration.models.AbstractNode;
 import org.micoli.dxcompanion.configuration.models.Configuration;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -20,10 +19,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public class ConfigurationFactory {
-    private static final Logger LOGGER = Logger.getInstance(ConfigurationFactory.class);
     private static final MessageDigest messageDigest;
     private static final ArrayList<String> acceptableConfigurationFiles = new ArrayList<>(Arrays.asList(".dx-companion.json", ".dx-companion.local.json"));
-    ;
 
     static {
         try {
@@ -41,7 +38,7 @@ public class ConfigurationFactory {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         objectMapper.registerSubtypes(AbstractNode.class);
-        String stringContent ="";
+        String stringContent = "";
         try {
             stringContent = loadJsonFiles(projectPath, files);
             Configuration configuration = objectMapper.readValue(stringContent, Configuration.class);
@@ -52,12 +49,11 @@ public class ConfigurationFactory {
         }
     }
 
-    private static String loadJsonFiles(String projectPath ,List<String> files) throws FileNotFoundException, GsonTools.JsonObjectExtensionConflictException {
-        JsonParser parser = new JsonParser();
+    private static String loadJsonFiles(String projectPath, List<String> files) throws IOException, GsonTools.JsonObjectExtensionConflictException {
         JsonObject mergedJson = new JsonObject();
         for (String file : files) {
-            JsonElement jsonFile = parser.parse(new FileReader(new File(projectPath, file)));
-            GsonTools.extendJsonObject(mergedJson, GsonTools.ConflictStrategy.PREFER_SECOND_OBJ,jsonFile.getAsJsonObject());
+            JsonElement jsonFile = JsonParser.parseString(Files.asCharSource(new File(projectPath, file), StandardCharsets.UTF_8).read()).getAsJsonObject();
+            GsonTools.extendJsonObject(mergedJson, GsonTools.ConflictStrategy.PREFER_SECOND_OBJ, jsonFile.getAsJsonObject());
         }
         return mergedJson.toString();
     }

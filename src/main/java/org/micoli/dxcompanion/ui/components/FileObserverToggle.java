@@ -13,9 +13,9 @@ import java.io.*;
 public class FileObserverToggle extends DynamicTreeNode {
     private static final Logger LOGGER = Logger.getInstance(FileObserverToggle.class);
     private final String root;
-    ObservedFile observedFile;
-    String activeRegularExpression;
-    String disabledRegularExpression;
+    final ObservedFile observedFile;
+    final String activeRegularExpression;
+    final String disabledRegularExpression;
 
     private enum Status {
         Active, Inactive, Unknown

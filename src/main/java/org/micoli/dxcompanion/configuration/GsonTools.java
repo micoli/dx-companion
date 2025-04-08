@@ -9,7 +9,7 @@ public class GsonTools {
 
     public enum ConflictStrategy {
 
-        THROW_EXCEPTION, PREFER_FIRST_OBJ, PREFER_SECOND_OBJ, PREFER_NON_NULL;
+        THROW_EXCEPTION, PREFER_FIRST_OBJ, PREFER_SECOND_OBJ, PREFER_NON_NULL
     }
 
     public static class JsonObjectExtensionConflictException extends Exception {
