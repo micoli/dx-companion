@@ -10,6 +10,6 @@ final class ToolWindowFactory implements com.intellij.openapi.wm.ToolWindowFacto
     @Override
     public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
         ToolWindowContent toolWindowContent = new ToolWindowContent(project);
-        toolWindow.getContentManager().addContent(ContentFactory.getInstance().createContent(toolWindowContent.getContentPanel(), "", false));
+        toolWindow.getContentManager().addContent(ContentFactory.getInstance().createContent(toolWindowContent.contentPanel, "", false));
     }
 }

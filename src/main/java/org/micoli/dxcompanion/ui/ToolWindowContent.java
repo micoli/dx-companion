@@ -5,6 +5,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.treeStructure.Tree;
 import com.intellij.util.concurrency.AppExecutorUtil;
+import com.intellij.util.ui.JBUI;
+import com.intellij.util.ui.SingleComponentCenteringLayout;
 import org.jetbrains.annotations.NotNull;
 import org.micoli.dxcompanion.configuration.ConfigurationException;
 import org.micoli.dxcompanion.configuration.ConfigurationFactory;
@@ -16,36 +18,39 @@ import org.micoli.dxcompanion.ui.components.tree.ActionTreeFactory;
 import org.micoli.dxcompanion.ui.components.tree.TreeUtils;
 
 import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.util.concurrent.TimeUnit;
 
 class ToolWindowContent {
     private static final Logger LOGGER = Logger.getInstance(ToolWindowContent.class);
     private final Project project;
-    private final JPanel contentPanel = new JPanel();
-    private final JPanel mainPanel = new JPanel();
+    public final JPanel contentPanel = new JPanel();
+    private final JComponent mainPanel = new JPanel();
     private Tree tree;
     private Configuration configuration = new Configuration();
     private final ActionTreeFactory actionTreeFactory = new ActionTreeFactory();
 
     public ToolWindowContent(Project project) {
-        contentPanel.setLayout(new BorderLayout(2, 2));
-        contentPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-        contentPanel.add(mainPanel, BorderLayout.CENTER);
-        contentPanel.add(createControlsPanel(), BorderLayout.PAGE_END);
+        this.contentPanel.setLayout(new BorderLayout(2, 2));
+        this.contentPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        this.contentPanel.add(this.mainPanel, BorderLayout.CENTER);
+        this.contentPanel.add(createControlsPanel(), BorderLayout.PAGE_END);
+        this.mainPanel.setLayout(new BorderLayout());
         this.project = project;
         AppExecutorUtil.getAppScheduledExecutorService().scheduleWithFixedDelay(() -> {
             updateMainPanel();
             refreshComponents();
-            mainPanel.revalidate();
+            this.mainPanel.revalidate();
         }, 0, 2000, TimeUnit.MILLISECONDS);
     }
 
     private void refreshComponents() {
-        if(tree == null){
+        if(this.tree == null){
             return;
         }
-        TreeUtils.forEachLeaf(tree, (node, path) -> {
+        TreeUtils.forEachLeaf(this.tree, (node, path) -> {
             if (node instanceof FileObserverToggle fileObserverToggle) {
                 fileObserverToggle.check();
             }
@@ -58,39 +63,38 @@ class ToolWindowContent {
             newConfiguration = ConfigurationFactory.get(project.getBasePath());
         } catch (ConfigurationException e) {
             removeAllComponents();
-            tree = null;
-            mainPanel.setLayout(new BorderLayout());
-            mainPanel.add(new TextArea(e.getMessage()));
-            mainPanel.revalidate();
+            this.tree = null;
+            this.mainPanel.add(new TextArea(e.getMessage()));
+            this.mainPanel.revalidate();
             configuration.serial = null;
             return;
         }
-        assert newConfiguration != null;
         if (newConfiguration.serial.equals(configuration.serial)) {
             return;
         }
 
         removeAllComponents();
-        mainPanel.revalidate();
-        mainPanel.setLayout(new BorderLayout());
+        this.mainPanel.revalidate();
 
-        tree = actionTreeFactory.treeBuilder(newConfiguration.nodes);
-        mainPanel.add(new JBScrollPane(tree), BorderLayout.CENTER);
+        this.tree = actionTreeFactory.treeBuilder(newConfiguration.nodes);
+        JBScrollPane comp = new JBScrollPane(this.tree);
+        comp.setBorder(JBUI.Borders.empty());
+        this.mainPanel.add(comp, BorderLayout.CENTER);
 
         configuration = newConfiguration;
         LOGGER.debug("MainPanel reloaded");
     }
 
     private void removeAllComponents() {
-        if(tree == null){
+        if(this.tree == null){
             return;
         }
-        TreeUtils.forEachLeaf(tree, (node, path) -> {
+        TreeUtils.forEachLeaf(this.tree, (node, path) -> {
             if (node instanceof DynamicTreeNode dynamicTreeNode) {
                 dynamicTreeNode.unregisterShortcut();
             }
         });
-        mainPanel.removeAll();
+        this.mainPanel.removeAll();
     }
 
     @NotNull
@@ -100,12 +104,8 @@ class ToolWindowContent {
         controlsPanel.add(refreshDateAndTimeButton);
         refreshDateAndTimeButton.addActionListener(e -> {
             updateMainPanel();
-            mainPanel.revalidate();
+            this.mainPanel.revalidate();
         });
         return controlsPanel;
-    }
-
-    public JPanel getContentPanel() {
-        return contentPanel;
     }
 }
